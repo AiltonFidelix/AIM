@@ -1,0 +1,4 @@
+
+[submodule "lib/MPU6050"]
+	path = lib/MPU6050
+	url = https://github.com/AiltonFidelix/MPU6050
