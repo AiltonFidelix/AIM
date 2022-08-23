@@ -1,58 +1,31 @@
-#include "esp_err.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
 
-#include "config.h"
-#include <mpu6050.h>
+#include "taskWiFi.h"
+#include "taskIMU.h"
+#include "taskLED.h"
+#include "sdStorage.h"
 
-// TAG used for main application logi
+// TAG used for main logi
 static const char TAG[] = "main";
-
-void vTaskLED(void *pvParameters)
-{
-    (void)pvParameters;
-
-    bool led_state = false;
-    gpio_set_direction(LED, GPIO_MODE_OUTPUT);
-
-    while (1)
-    {
-        // Toggle LED
-        gpio_set_level(LED, led_state);
-        led_state = !led_state;
-        vTaskDelay(80 / portTICK_PERIOD_MS);
-    }
-}
-
-void vTaskIMU(void *pvParameters)
-{
-    (void)pvParameters;
-
-    mpuBegin();
-    mpuSetFilterBandwidth(MPU6050_BAND_5_HZ);
-
-    while (1)
-    {
-        esp_err_t ret = mpuReadSensors();
-        if (ret == ESP_OK)
-        {
-            printf("Temperature: %.2f°C\n", mpuReadTemperature());
-            printf("Acceleration X: %.2f\n", mpuReadAccelerationX());
-            printf("Acceleration Y: %.2f\n", mpuReadAccelerationY());
-            printf("Acceleration Z: %.2f\n", mpuReadAccelerationZ());
-            printf("Gyroscope X: %.2f\n", mpuReadGyroscopeX());
-            printf("Gyroscope Y: %.2f\n", mpuReadGyroscopeY());
-            printf("Gyroscope Z: %.2f\n", mpuReadGyroscopeZ());
-        }
-        else{
-            printf("Read sensors failed! Error: %s\n", esp_err_to_name(ret));
-        }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-}
 
 void app_main()
 {
     ESP_LOGI(TAG, "AIM device Starting...");
 
-    xTaskCreate(&vTaskLED, "vTaskLED", 2048, NULL, 5, NULL);
-    xTaskCreate(&vTaskIMU, "vTaskIMU", 2048, NULL, 5, NULL);
+    // Initialize NVS
+    esp_err_t ret = nvs_flash_init();
+    if(ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND){
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+
+    // Start all tasks
+    start_task_wifi();
+    start_task_led();
+    start_task_imu();
+    card_test();
+
+    ESP_LOGI(TAG, "All tasks were started!");
 }

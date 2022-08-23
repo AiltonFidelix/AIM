@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.cpp": "cpp",
+        "esp_vfs_fat.h": "c",
+        "sdspi_host.h": "c",
+        "sdmmc_types.h": "c"
+    }
+}
