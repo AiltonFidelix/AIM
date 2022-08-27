@@ -1,7 +1,7 @@
 #ifndef TASKWIFI_H
 #define TASKWIFI_H
 
-#include "task_common.h"
+#include "tasks_common.h"
 #include "esp_netif.h"
 
 #define WIFI_AP_SSID "AIM-device"        // AP name

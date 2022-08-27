@@ -1,4 +1,5 @@
 #include "taskWiFi.h"
+#include "taskHTTP.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
@@ -197,6 +198,9 @@ static void vTaskWiFi(void *pvParameters)
             {
             case WIFI_APP_MSG_START_HTTP_SERVER:
                 ESP_LOGI(TAG, "WIFI_APP_MSG_START_HTTP_SERVER");
+
+                start_task_http_server();
+                
                 break;
             case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
                 ESP_LOGI(TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER");
@@ -206,6 +210,9 @@ static void vTaskWiFi(void *pvParameters)
 
                 // Set current number of retries to zero
                 g_retry_number = 0;
+
+                // Let the HTTP server know about the connection attempt
+				http_server_monitor_send_message(HTTP_MSG_WIFI_CONNECT_INIT);
 
                 break;
             case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
