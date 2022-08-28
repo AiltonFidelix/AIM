@@ -12,13 +12,13 @@
 #define TASK_HTTP_SERVER_CORE 0
 
 // Config task HTTP monitor
-#define TASK_HTTP_MONITOR_SIZE 8192
+#define TASK_HTTP_MONITOR_SIZE 4096
 #define TASK_HTTP_MONITOR_PRIORITY 3
 #define TASK_HTTP_MONITOR_CORE 0
 
 // Config task IMU
 #define TASK_IMU_SIZE 2048
-#define TASK_IMU_PRIORITY 2
+#define TASK_IMU_PRIORITY 5
 #define TASK_IMU_CORE 1
 
 // Config task LED

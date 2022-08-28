@@ -4,6 +4,9 @@
 // TAG used for task imu logi
 static const char TAG[] = "task_imu";
 
+// global IMU variables
+float g_pitch, g_roll, g_yaw;
+
 float square(float n)
 {
     return n * n;
@@ -36,7 +39,6 @@ void vTaskIMU(void *pvParameters)
             float gyroX = mpuGetGyroscopeX();
             float gyroY = mpuGetGyroscopeY();
             float gyroZ = mpuGetGyroscopeZ();
-            float temp = mpuGetTemperature();
 
             // calculate accelerometer angles
             float arx = (180 / PI) * atan(accX / sqrt(square(accY) + square(accZ)));
@@ -57,15 +59,10 @@ void vTaskIMU(void *pvParameters)
                 gry = gry + (1 * gyroY);
                 grz = grz + (1 * gyroZ);
             }
-
             // apply filter
-            float rx = (0.1 * arx) + (0.9 * grx);
-            float ry = (0.1 * ary) + (0.9 * gry);
-            float rz = (0.1 * arz) + (0.9 * grz);
-
-            printf("Pitch: %.2f\n", rx);
-            printf("Roll: %.2f\n", ry);
-            printf("Yaw: %.2f\n", rz);
+            g_pitch = (0.1 * arx) + (0.9 * grx);
+            g_roll = (0.1 * ary) + (0.9 * gry);
+            g_yaw = (0.1 * arz) + (0.9 * grz);
 
             i++;
         }
@@ -81,4 +78,24 @@ void start_task_imu(void)
 {
     ESP_LOGI(TAG, "Starting task IMU...");
     xTaskCreatePinnedToCore(&vTaskIMU, "vTaskIMU", TASK_IMU_SIZE, NULL, TASK_IMU_PRIORITY, NULL, TASK_IMU_CORE);
+}
+
+float getPitch()
+{
+    return g_pitch;
+}
+
+float getRoll()
+{
+    return g_roll;
+}
+
+float getYaw()
+{
+    return g_yaw;
+}
+
+float getTemperature()
+{
+    return mpuGetTemperature();
 }

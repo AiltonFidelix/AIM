@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<script src='jquery.min.js'></script>
-	<script src='bootstrap.min.js'></script>
 	<link rel="stylesheet" href="bootstrap.min.css">
-	<script async src="app.js"></script>
+	<link rel="stylesheet" href="app.min.css">
+	<script async src="app.min.js"></script>
 	<title>AIM</title>
 </head>
 
@@ -19,7 +19,7 @@
 		<div class="row">
 			<div class="col px-0">
 				<ul class="nav nav nav-tabs border-primary justify-content-end">
-					<li class="nav-item"><a class="nav-link disabled" href="#">AIM</a></li>
+					<li class="nav-item"><a class="nav-link disabled" href="#">Device AIM Version 1.0.0</a></li>
 				</ul>
 			</div>
 		</div>
@@ -29,33 +29,39 @@
 	<!-- Start cards -->
 	<div class="container py-5">
 		<div class="row justify-content-start">
+			<!-- Card Pitch -->
 			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
-				<!-- Card Pitch -->
 				<div class="card border-primary card-hover card-width">
 					<div class="card-body text-center">
 						<h5 class="card-title fw-bold">Pitch</h5>
-						<h1>45°</h1>
+						<h1 id="pitch_reading" class="display-3"></h1>
 					</div>
 				</div>
-				<!-- Card Roll -->
+			</div>
+			<!-- Card Roll -->
+			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
 				<div class="card border-primary card-hover card-width">
 					<div class="card-body text-center">
 						<h5 class="card-title fw-bold">Roll</h5>
-						<h1>22°</h1>
+						<h1 id="roll_reading" class="display-3"></h1>
 					</div>
 				</div>
-				<!-- Card Yaw -->
+			</div>
+			<!-- Card Yaw -->
+			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
 				<div class="card border-primary card-hover card-width">
 					<div class="card-body text-center">
 						<h5 class="card-title fw-bold">Yaw</h5>
-						<h1>60°</h1>
+						<h1 id="yaw_reading" class="display-3"></h1>
 					</div>
 				</div>
-				<!-- Card Temperature -->
+			</div>
+			<!-- Card Temperature -->
+			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
 				<div class="card border-primary card-hover card-width">
 					<div class="card-body text-center">
 						<h5 class="card-title fw-bold">Temperature</h5>
-						<h1>28.15°C</h1>
+						<h1 id="temperature_reading" class="display-3"></h1>
 					</div>
 				</div>
 			</div>

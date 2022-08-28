@@ -7,6 +7,7 @@ void vTaskLED(void *pvParameters)
 {
     (void)pvParameters;
 
+    uint16_t time_blink = 1000;
     bool led_state = false;
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
 
@@ -15,11 +16,12 @@ void vTaskLED(void *pvParameters)
         // Toggle LED
         gpio_set_level(LED, led_state);
         led_state = !led_state;
-        vTaskDelay(80 / portTICK_PERIOD_MS);
+        vTaskDelay(time_blink / portTICK_PERIOD_MS);
     }
 }
 
-void start_task_led(void){
+void start_task_led(void)
+{
     ESP_LOGI(TAG, "Starting task LED...");
     xTaskCreatePinnedToCore(&vTaskLED, "vTaskLED", TASK_LED_SIZE, NULL, TASK_LED_PRIORITY, NULL, TASK_LED_CORE);
 }

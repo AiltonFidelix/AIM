@@ -99,7 +99,7 @@ static void wifi_app_event_handler_init(void)
     // Event loop for the wifi driver
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    // Event handler for the connectino
+    // Event handler for the connection
     esp_event_handler_instance_t instance_wifi_event;
     esp_event_handler_instance_t instance_ip_event;
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_app_event_handler, NULL, &instance_wifi_event));

@@ -15,4 +15,10 @@
  */
 void start_task_imu(void);
 
+/* Functions to get sensor IMU values */
+float getPitch();
+float getRoll();
+float getYaw();
+float getTemperature();
+
 #endif
