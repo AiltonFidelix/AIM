@@ -1,3 +1,9 @@
+<!-- 
+	Author: Ailton Fidelix 
+	Date: 30-08-2022
+	Description: AIM device web page
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +24,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col px-0">
-				<ul class="nav nav nav-tabs border-primary justify-content-end">
+				<ul class="nav nav nav-tabs border-primary justify-content-center">
 					<li class="nav-item"><a class="nav-link disabled" href="#">Device AIM Version 1.0.0</a></li>
 				</ul>
 			</div>
@@ -30,38 +36,62 @@
 	<div class="container py-5">
 		<div class="row justify-content-start">
 			<!-- Card Pitch -->
-			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
-				<div class="card border-primary card-hover card-width">
-					<div class="card-body text-center">
+			<div class="col-md-12 col-xl-6 col-xxl-3 p-2">
+				<div class="rounded-pill card border-primary card-hover shadow-lg">
+					<div class="card-body text-primary text-center">
 						<h5 class="card-title fw-bold">Pitch</h5>
 						<h1 id="pitch_reading" class="display-3"></h1>
 					</div>
 				</div>
 			</div>
 			<!-- Card Roll -->
-			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
-				<div class="card border-primary card-hover card-width">
-					<div class="card-body text-center">
+			<div class="col-md-12 col-xl-6 col-xxl-3 p-2">
+				<div class="rounded-pill card border-primary card-hover shadow-lg">
+					<div class="card-body text-primary text-center">
 						<h5 class="card-title fw-bold">Roll</h5>
 						<h1 id="roll_reading" class="display-3"></h1>
 					</div>
 				</div>
 			</div>
 			<!-- Card Yaw -->
-			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
-				<div class="card border-primary card-hover card-width">
-					<div class="card-body text-center">
+			<div class="col-md-12 col-xl-6 col-xxl-3 p-2">
+				<div class="rounded-pill card border-primary card-hover shadow-lg">
+					<div class="card-body text-primary text-center">
 						<h5 class="card-title fw-bold">Yaw</h5>
 						<h1 id="yaw_reading" class="display-3"></h1>
 					</div>
 				</div>
 			</div>
 			<!-- Card Temperature -->
-			<div class="col-12 col-md-6 col-xl-4 col-xxl-3 p-2">
-				<div class="card border-primary card-hover card-width">
-					<div class="card-body text-center">
+			<div class="col-md-12 col-xl-6 col-xxl-3 p-2">
+				<div class="rounded-pill card border-secondary card-hover shadow-lg">
+					<div class="card-body text-secondary text-center">
 						<h5 class="card-title fw-bold">Temperature</h5>
 						<h1 id="temperature_reading" class="display-3"></h1>
+					</div>
+				</div>
+			</div>
+			<!-- Card Firmware update -->
+			<div class="col-xl-12 col-xxl-6 p-5">
+				<div class="rounded-pill card border-secondary card-hover shadow-lg">
+					<div class="card-body text-secondary text-center">
+						<h5 class="card-title fw-bold">Firmware Update</h5>
+						<div class="input-group px-5 py-3">
+							<input type="file" class="form-control" id="file">
+							<button class="btn btn-outline-primary" type="button" id="upload">Upload</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Card Data Storage Interval -->
+			<div class="col-xl-12 col-xxl-6 p-5">
+				<div class="rounded-pill card border-secondary card-hover shadow-lg">
+					<div class="card-body text-secondary text-center">
+						<h5 class="card-title fw-bold">Data Storage Interval</h5>
+						<div class="input-group px-5 py-3">
+							<input type="text" class="form-control" id="interval">
+							<button class="btn btn-outline-primary" type="button" id="save">Save</button>
+						</div>
 					</div>
 				</div>
 			</div>

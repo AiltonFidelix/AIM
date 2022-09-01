@@ -1,7 +1,7 @@
 #include "sdStorage.h"
 
 // TAG used for sd storage
-static const char TAG[] = "sdcard";
+static const char TAG[] = "sdcard_storage";
 
 // Card and Host global vars
 sdmmc_card_t *card;

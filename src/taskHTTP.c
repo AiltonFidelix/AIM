@@ -1,5 +1,6 @@
 #include "taskHTTP.h"
 #include "taskIMU.h"
+#include "nvsStorage.h"
 
 // TAG used for task http logi
 static const char TAG[] = "task_http";
@@ -195,6 +196,53 @@ static esp_err_t http_server_sensorValues_json_handler(httpd_req_t *req)
 }
 
 /**
+ * @brief Get the setInterval.json file when the web page require.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_interval_json_handler(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "getInterval.json requested");
+
+    char interval_json[100];
+
+    sprintf(interval_json, "{\"interval\":\"%d\"}", nvs_load_interval());
+
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, interval_json, strlen(interval_json));
+
+	return ESP_OK;
+}
+
+/**
+ * @brief Set the setInterval.json file when the web page require.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_set_interval_json_handler(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "setInterval.json requested");
+
+    size_t len_interval = 0;
+    char *interval_str = NULL;
+
+	// Get interval header
+	len_interval = httpd_req_get_hdr_value_len(req, "interval") + 1;
+	if (len_interval > 1)
+	{
+        interval_str = malloc(len_interval);
+		if (httpd_req_get_hdr_value_str(req, "interval", interval_str, len_interval) == ESP_OK)
+		{
+			ESP_LOGI(TAG, "New interval: %s", interval_str);
+            nvs_save_interval(interval_str);
+		}
+        free(interval_str);
+	}
+
+	return ESP_OK;
+}
+
+/**
  * @brief Sets up the default httpd server configuration.
  * @return http server instance handle if successful, NULL otherwise.
  */
@@ -290,6 +338,22 @@ static httpd_handle_t http_server_configure(void)
             .handler = http_server_sensorValues_json_handler,
             .user_ctx = NULL};
         httpd_register_uri_handler(http_server_handle, &sensorValues_json);
+
+        // register /getInterval.json handler
+        httpd_uri_t getInterval_json = {
+            .uri = "/getInterval.json",
+            .method = HTTP_GET,
+            .handler = http_server_get_interval_json_handler,
+            .user_ctx = NULL};
+        httpd_register_uri_handler(http_server_handle, &getInterval_json);
+
+        // register /setInterval.json handler
+        httpd_uri_t setInterval_json = {
+            .uri = "/setInterval.json",
+            .method = HTTP_POST,
+            .handler = http_server_set_interval_json_handler,
+            .user_ctx = NULL};
+        httpd_register_uri_handler(http_server_handle, &setInterval_json);
 
         return http_server_handle;
     }
