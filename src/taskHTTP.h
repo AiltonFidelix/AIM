@@ -3,9 +3,18 @@
 
 #include "esp_http_server.h"
 #include "esp_log.h"
+#include "esp_ota_ops.h"
+#include "esp_wifi.h"
+#include "sys/param.h"
 
 #include "tasks_common.h"
 #include "taskWiFi.h"
+#include "taskIMU.h"
+#include "nvsStorage.h"
+
+#define OTA_UPDATE_PENDING 0
+#define OTA_UPDATE_SUCCESSFUL 1
+#define OTA_UPDATE_FAILED -1
 
 /**
  * Messages for the HTTP monitor
@@ -15,9 +24,10 @@ typedef enum http_server_message
 	HTTP_MSG_WIFI_CONNECT_INIT = 0,
 	HTTP_MSG_WIFI_CONNECT_SUCCESS,
 	HTTP_MSG_WIFI_CONNECT_FAIL,
+	HTTP_MSG_WIFI_USER_DISCONNECT,
 	HTTP_MSG_OTA_UPDATE_SUCCESSFUL,
 	HTTP_MSG_OTA_UPDATE_FAILED,
-	HTTP_MSG_OTA_UPATE_INITIALIZED,
+	HTTP_MSG_TIME_SERVICE_INITIALIZED,
 } http_server_message_e;
 
 /**
@@ -46,4 +56,9 @@ void start_task_http_server(void);
  */
 void stop_task_http_server(void);
 
-#endif 
+/**
+ * @brief Timer callback function which calls esp_restart upon successful firmware update.
+ */
+void http_server_fw_update_reset_callback(void *arg);
+
+#endif

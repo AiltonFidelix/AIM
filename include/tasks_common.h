@@ -17,7 +17,7 @@
 #define TASK_HTTP_MONITOR_CORE 0
 
 // Config task IMU
-#define TASK_IMU_SIZE 2048
+#define TASK_IMU_SIZE 4096
 #define TASK_IMU_PRIORITY 5
 #define TASK_IMU_CORE 1
 

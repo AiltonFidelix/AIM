@@ -5,6 +5,6 @@
 #include "nvs_flash.h"
 
 esp_err_t nvs_save_interval(const char *interval);
-int16_t nvs_load_interval();
+uint16_t nvs_load_interval();
 
 #endif

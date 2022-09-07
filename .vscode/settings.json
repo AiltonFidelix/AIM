@@ -3,6 +3,7 @@
         "*.cpp": "cpp",
         "esp_vfs_fat.h": "c",
         "sdspi_host.h": "c",
-        "sdmmc_types.h": "c"
+        "sdmmc_types.h": "c",
+        "esp_http_server.h": "c"
     }
 }

@@ -4,11 +4,18 @@
     Description: AIM device web page script
 */
 
+var seconds = null;
+var otaTimerVar = null;
+
 $(document).ready(function () {
     startSensorInterval();
     getStorageInterval();
+    getUpdateStatus();
     $("#save").on("click", function () {
-        setStorageInterval();
+        checkInterval();
+    });
+    $("#upload").on("click", function () {
+        updateFirmware();
     });
 });
 
@@ -46,6 +53,46 @@ function setStorageInterval() {
     window.alert('Successful save interval!');
 }
 
+function checkInterval() {
+    var interval = parseInt($("#interval").val());
+    if (interval > 0 && interval <= 60000) {
+        setStorageInterval();
+    }
+    else {
+        window.alert('Interval need to be between 1 ~ 60000 seconds.');
+    }
+}
+
+function updateFirmware() {
+    var formData = new FormData();
+    var fileSelect = document.getElementById("selected_file");
+
+    if (fileSelect.files && fileSelect.files.length == 1) {
+        var file = fileSelect.files[0];
+        formData.set("file", file, file.name);
+        document.getElementById("update_status").innerHTML = "Uploading " + file.name + ", Firmware Update in Progress...";
+
+        var request = new XMLHttpRequest();
+
+        request.upload.addEventListener("progress", updateProgress);
+        request.open('POST', "/OTAupdate");
+        request.responseType = "blob";
+        request.send(formData);
+    }
+    else {
+        window.alert('Select a file first!')
+    }
+}
+
+function updateProgress(oEvent) {
+    if (oEvent.lengthComputable) {
+        getUpdateStatus();
+    }
+    else {
+        window.alert('total size is unknown')
+    }
+}
+
 function getUpdateStatus() {
     var xhr = new XMLHttpRequest();
     var requestURL = "/OTAstatus";
@@ -55,14 +102,26 @@ function getUpdateStatus() {
     if (xhr.readyState == 4 && xhr.status == 200) {
         var response = JSON.parse(xhr.responseText);
 
-        document.getElementById("latest_firmware").innerHTML = response.compile_date + " - " + response.compile_time;
-
         if (response.ota_update_status == 1) {
             seconds = 10;
             otaRebootTimer();
         }
         else if (response.ota_update_status == -1) {
-            document.getElementById("ota_update_status").innerHTML = "!!! Upload Error !!!";
+            document.getElementById("update_status").className = "text-danger text-center";
+            document.getElementById("update_status").innerHTML = "!!! Upload Error !!!";
         }
+    }
+}
+
+function otaRebootTimer() {
+    document.getElementById("update_status").className = "text-success text-center";
+    document.getElementById("update_status").innerHTML = "Firmware Update Complete. This page will close shortly! Rebooting in: " + seconds;
+
+    if (--seconds == 0) {
+        clearTimeout(otaTimerVar);
+        window.location.reload();
+    }
+    else {
+        otaTimerVar = setTimeout(otaRebootTimer, 1000);
     }
 }

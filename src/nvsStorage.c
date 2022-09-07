@@ -5,6 +5,11 @@ static const char TAG[] = "nvs_storage";
 
 static const char device[] = "AIM";
 
+/**
+ * @brief Save interval in flash
+ * @param s_interval string interval
+ * @return esp_err_t ESP_OK if the read was ok, otherwise ESP_ERR
+ */
 esp_err_t nvs_save_interval(const char *s_interval)
 {
     esp_err_t ret;
@@ -42,7 +47,11 @@ esp_err_t nvs_save_interval(const char *s_interval)
     return ESP_OK;
 }
 
-int16_t nvs_load_interval()
+/**
+ * @brief Load interval from flash
+ * @return interval
+ */
+uint16_t nvs_load_interval()
 {
     esp_err_t ret;
     nvs_handle_t nvs_handle;
@@ -61,9 +70,9 @@ int16_t nvs_load_interval()
         }
         nvs_close(nvs_handle);
 
-        ESP_LOGI(TAG, "Interval load: %d", interval);
+        ESP_LOGI(TAG, "Interval load: %d", (uint16_t)interval);
 
-        return interval;
+        return (uint16_t)interval;
     }
     return 0;
 }

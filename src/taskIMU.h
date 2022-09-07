@@ -7,6 +7,8 @@
 #include "esp_log.h"
 
 #include "tasks_common.h"
+#include "nvsStorage.h"
+#include "sdStorage.h"
 #include <mpu6050.h>
 
 /**

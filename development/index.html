@@ -20,20 +20,12 @@
 
 <body>
 
-	<!-- Start navbar -->
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col px-0">
-				<ul class="nav nav nav-tabs border-primary justify-content-center">
-					<li class="nav-item"><a class="nav-link disabled" href="#">Device AIM Version 1.0.0</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-	<!-- End navbar -->
+	<h2 class="display-3 text-secondary text-center py-5">AIM Version 1.0</h4>
+
+	<h4 class="text-primary text-center" id="update_status"></h4>
 
 	<!-- Start cards -->
-	<div class="container py-5">
+	<div class="container">
 		<div class="row justify-content-start">
 			<!-- Card Pitch -->
 			<div class="col-md-12 col-xl-6 col-xxl-3 p-2">
@@ -77,7 +69,7 @@
 					<div class="card-body text-secondary text-center">
 						<h5 class="card-title fw-bold">Firmware Update</h5>
 						<div class="input-group px-5 py-3">
-							<input type="file" class="form-control" id="file">
+							<input type="file" class="form-control" id="selected_file">
 							<button class="btn btn-outline-primary" type="button" id="upload">Upload</button>
 						</div>
 					</div>

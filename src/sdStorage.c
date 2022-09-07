@@ -139,9 +139,9 @@ esp_err_t create_file(const char *file)
         return ESP_FAIL;
     }
     // Write header
-    fprintf(f, "Angle X,");
-    fprintf(f, "Angle Y,");
-    fprintf(f, "Angle Z,");
+    fprintf(f, "Pitch,");
+    fprintf(f, "Roll,");
+    fprintf(f, "Yaw,");
     fprintf(f, "Temperature,");
     fprintf(f, "\n");
     fclose(f);

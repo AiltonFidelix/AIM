@@ -16,10 +16,6 @@ void vTaskIMU(void *pvParameters)
 {
     (void)pvParameters;
 
-    const float PI = 3.141592;
-    int16_t i = 1;
-    float grx, gry, grz;
-
     if (mpuBegin(MPU6050_ACCEL_RANGE_2G, MPU6050_GYRO_RANGE_250DPS) != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to begin MPU6050 device. "
@@ -27,6 +23,16 @@ void vTaskIMU(void *pvParameters)
         vTaskDelete(NULL);
     }
     mpuSetFilterBandwidth(MPU6050_BAND_21_HZ);
+
+    const float PI = 3.141592;
+    int16_t i = 1;
+    float grx, gry, grz;
+
+    //uint16_t storageInterval = nvs_load_interval() > 0 ? nvs_load_interval() : 60;
+    uint16_t storageInterval = 60;
+    uint16_t seconds = 0;
+
+    sdcard_config();
 
     while (1)
     {
@@ -65,12 +71,23 @@ void vTaskIMU(void *pvParameters)
             g_yaw = (0.1 * arz) + (0.9 * grz);
 
             i++;
+
+            if (seconds >= storageInterval)
+            {
+                seconds = 0;
+                char data[100];
+                sprintf(data, "%.1f°,%.1f°,%.1f°,%.1f°C\n", getPitch(), getRoll(), getYaw(), getTemperature());
+                write_data(FILE_NAME, data);
+            }
         }
         else
         {
             printf("Read sensors failed! Error: %s\n", esp_err_to_name(ret));
         }
+
         vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        seconds++;
     }
 }
 

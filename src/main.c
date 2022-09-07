@@ -5,7 +5,7 @@
 #include "taskIMU.h"
 #include "taskLED.h"
 
-// TAG used for main logi
+// TAG used for main log
 static const char TAG[] = "main";
 
 void app_main()
