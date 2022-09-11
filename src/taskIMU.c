@@ -16,7 +16,7 @@ void vTaskIMU(void *pvParameters)
 {
     (void)pvParameters;
 
-    if (mpuBegin(MPU6050_ACCEL_RANGE_2G, MPU6050_GYRO_RANGE_250DPS) != ESP_OK)
+    if (mpuBegin(MPU6050_ACCEL_RANGE_2G, MPU6050_GYRO_RANGE_250DPS, true) != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to begin MPU6050 device. "
                       "Deleting task.");
@@ -24,18 +24,20 @@ void vTaskIMU(void *pvParameters)
     }
     mpuSetFilterBandwidth(MPU6050_BAND_21_HZ);
 
+    ds1307Begin(false);
+    sdcard_config();
+
+    uint16_t storageInterval = nvs_load_interval() > 0 ? nvs_load_interval() : 60;
+    uint16_t seconds = 0;
+
     const float PI = 3.141592;
     int16_t i = 1;
     float grx, gry, grz;
 
-    //uint16_t storageInterval = nvs_load_interval() > 0 ? nvs_load_interval() : 60;
-    uint16_t storageInterval = 60;
-    uint16_t seconds = 0;
-
-    sdcard_config();
-
     while (1)
     {
+        // TODO: adjust IMU calc
+
         esp_err_t ret = mpuReadSensors();
         if (ret == ESP_OK)
         {
@@ -71,12 +73,14 @@ void vTaskIMU(void *pvParameters)
             g_yaw = (0.1 * arz) + (0.9 * grz);
 
             i++;
-
+            
             if (seconds >= storageInterval)
             {
                 seconds = 0;
                 char data[100];
-                sprintf(data, "%.1f°,%.1f°,%.1f°,%.1f°C\n", getPitch(), getRoll(), getYaw(), getTemperature());
+                char timestamp[24];
+                ds1307GetTimestamp(timestamp);
+                sprintf(data, "%s,%.1f°,%.1f°,%.1f°,%.1f°C\n", timestamp, getPitch(), getRoll(), getYaw(), getTemperature());
                 write_data(FILE_NAME, data);
             }
         }

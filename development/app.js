@@ -11,6 +11,9 @@ $(document).ready(function () {
     startSensorInterval();
     getStorageInterval();
     getUpdateStatus();
+    $("#datetime").on("click", function () {
+        setDateTime();
+    });
     $("#save").on("click", function () {
         checkInterval();
     });
@@ -36,6 +39,22 @@ function getStorageInterval() {
     $.getJSON('/getInterval.json', function (data) {
         $("#interval").val(data["interval"]);
     });
+}
+
+function setDateTime() {
+    date = $("#date").val().split("-");
+    time = $("#time").val().split(":");
+    
+    $.ajax({
+        url: '/setDateTime.json',
+        dataType: 'json',
+        method: 'POST',
+        cache: false,
+        headers: { 'day': date[2], 'month': date[1], 'year': date[0].slice(-2), 'hour': time[0], 'minute': time[1] },
+        data: { 'timestamp': Date.now() }
+    });
+
+    window.alert('Date & time adjusted!');
 }
 
 function setStorageInterval() {

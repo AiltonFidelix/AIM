@@ -139,6 +139,7 @@ esp_err_t create_file(const char *file)
         return ESP_FAIL;
     }
     // Write header
+    fprintf(f, "Timestamp,");
     fprintf(f, "Pitch,");
     fprintf(f, "Roll,");
     fprintf(f, "Yaw,");

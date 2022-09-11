@@ -10,6 +10,7 @@
 #include "nvsStorage.h"
 #include "sdStorage.h"
 #include <mpu6050.h>
+#include <ds1307.h>
 
 /**
  * @brief Create and start IMU task

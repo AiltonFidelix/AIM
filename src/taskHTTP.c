@@ -294,7 +294,7 @@ esp_err_t http_server_OTA_update_handler(httpd_req_t *req)
         if (!is_req_body_started)
         {
             is_req_body_started = true;
-            
+
             // Get the location of the .bin file content (remove the web form data)
             char *body_start_p = strstr(ota_buff, "\r\n\r\n") + 4;
             int body_part_len = recv_len - (body_start_p - ota_buff);
@@ -374,6 +374,74 @@ esp_err_t http_server_OTA_status_handler(httpd_req_t *req)
 
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req, otaJSON, strlen(otaJSON));
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Set the setDateTime.json file when the web page require.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_set_date_time_json_handler(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "setDateTime.json requested");
+
+    size_t len_day = 0,
+           len_month = 0,
+           len_year = 0,
+           len_hour = 0,
+           len_minute = 0;
+
+    char *day_str = NULL,
+         *month_str = NULL,
+         *year_str = NULL,
+         *hour_str = NULL,
+         *minute_str = NULL;
+
+    // Get date header
+    len_day = httpd_req_get_hdr_value_len(req, "day") + 1;
+    len_month = httpd_req_get_hdr_value_len(req, "month") + 1;
+    len_year = httpd_req_get_hdr_value_len(req, "year") + 1;
+
+    if ((len_day > 1) && (len_month > 1) && (len_year > 1))
+    {
+        day_str = malloc(len_day);
+        month_str = malloc(len_month);
+        year_str = malloc(len_year);
+
+        esp_err_t day_ret = httpd_req_get_hdr_value_str(req, "day", day_str, len_day);
+        esp_err_t month_ret = httpd_req_get_hdr_value_str(req, "month", month_str, len_month);
+        esp_err_t year_ret = httpd_req_get_hdr_value_str(req, "year", year_str, len_year);
+
+        if ((day_ret == ESP_OK) && (month_ret == ESP_OK) && (year_ret == ESP_OK))
+        {
+            ds1307SetDate(atoi(day_str), atoi(month_str), atoi(year_str), 0);
+        }
+        free(day_str);
+        free(month_str);
+        free(year_str);
+    }
+
+    // Get time header
+    len_hour = httpd_req_get_hdr_value_len(req, "hour") + 1;
+    len_minute = httpd_req_get_hdr_value_len(req, "minute") + 1;
+
+    if ((len_hour > 1) && (len_minute > 1))
+    {
+        hour_str = malloc(len_hour);
+        minute_str = malloc(len_minute);
+
+        esp_err_t hour_ret = httpd_req_get_hdr_value_str(req, "hour", hour_str, len_hour);
+        esp_err_t minute_ret = httpd_req_get_hdr_value_str(req, "minute", minute_str, len_minute);
+
+        if ((hour_ret == ESP_OK) && (minute_ret == ESP_OK))
+        {
+            ds1307SetTime(atoi(hour_str), atoi(minute_str), 0);
+        }
+        free(hour_str);
+        free(minute_str);
+    }
 
     return ESP_OK;
 }
@@ -506,6 +574,14 @@ static httpd_handle_t http_server_configure(void)
             .handler = http_server_OTA_status_handler,
             .user_ctx = NULL};
         httpd_register_uri_handler(http_server_handle, &OTA_status);
+
+        // register /setDateTime.json handler
+        httpd_uri_t setDateTime_json = {
+            .uri = "/setDateTime.json",
+            .method = HTTP_POST,
+            .handler = http_server_set_date_time_json_handler,
+            .user_ctx = NULL};
+        httpd_register_uri_handler(http_server_handle, &setDateTime_json);
 
         return http_server_handle;
     }
