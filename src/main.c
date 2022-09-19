@@ -1,7 +1,6 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-#include "taskWiFi.h"
 #include "taskIMU.h"
 #include "taskLED.h"
 
@@ -20,10 +19,9 @@ void app_main()
     }
     ESP_ERROR_CHECK(ret);
 
-    // Start all tasks
-    start_task_wifi();
+    // Start tasks
     start_task_led();
     start_task_imu();
 
-    ESP_LOGI(TAG, "All tasks were started!");
+    ESP_LOGI(TAG, "Tasks started");
 }

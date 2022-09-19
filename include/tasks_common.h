@@ -22,7 +22,7 @@
 #define TASK_IMU_CORE 1
 
 // Config task LED
-#define TASK_LED_SIZE 512
+#define TASK_LED_SIZE 2048
 #define TASK_LED_PRIORITY 1
 #define TASK_LED_CORE 1
 

@@ -8,8 +8,10 @@
 #include "esp_log.h"
 
 #include "tasks_common.h"
+#include "taskWiFi.h"
 
 #define LED GPIO_NUM_2
+#define CFG_BUTTON GPIO_NUM_27
 
 /**
  * @brief Create and start LED task

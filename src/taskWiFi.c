@@ -13,6 +13,9 @@
 // TAG used for task wifi logi
 static const char TAG[] = "task_wifi";
 
+// task WiFi handle
+static TaskHandle_t taskWiFiHandle = NULL;
+
 // Used to returning the wifi configuration
 wifi_config_t *wifi_config = NULL;
 
@@ -200,7 +203,7 @@ static void vTaskWiFi(void *pvParameters)
                 ESP_LOGI(TAG, "WIFI_APP_MSG_START_HTTP_SERVER");
 
                 start_task_http_server();
-                
+
                 break;
             case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
                 ESP_LOGI(TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER");
@@ -212,15 +215,10 @@ static void vTaskWiFi(void *pvParameters)
                 g_retry_number = 0;
 
                 // Let the HTTP server know about the connection attempt
-				http_server_monitor_send_message(HTTP_MSG_WIFI_CONNECT_INIT);
+                http_server_monitor_send_message(HTTP_MSG_WIFI_CONNECT_INIT);
 
                 break;
-            case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
-                ESP_LOGI(TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP");
-                break;
-            case WIFI_APP_MSG_STA_DISCONNECTED:
-                ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED");
-                break;
+                
             default:
                 break;
             }
@@ -244,15 +242,43 @@ void start_task_wifi(void)
 {
     ESP_LOGI(TAG, "Starting task WiFi...");
 
-    // disable wifi default logging messages
-    esp_log_level_set("wifi", ESP_LOG_NONE);
+    if (taskWiFiHandle)
+    {
+        ESP_LOGI(TAG, "Task was created already, just resume");
+        vTaskResume(taskWiFiHandle);
+        wifi_app_send_message(WIFI_APP_MSG_START_HTTP_SERVER);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Task was not created yet, creating");
+        // disable wifi default logging messages
+        esp_log_level_set("wifi", ESP_LOG_NONE);
 
-    // Allocate memory for the wifi configuration
-    wifi_config = (wifi_config_t *)malloc(sizeof(wifi_config_t));
-    memset(wifi_config, 0x00, sizeof(wifi_config_t));
+        // Allocate memory for the wifi configuration
+        wifi_config = (wifi_config_t *)malloc(sizeof(wifi_config_t));
+        memset(wifi_config, 0x00, sizeof(wifi_config_t));
 
-    wifi_app_queue_handle = xQueueCreate(3, sizeof(wifi_app_queue_message_t));
+        wifi_app_queue_handle = xQueueCreate(3, sizeof(wifi_app_queue_message_t));
 
-    // start the wifi application task
-    xTaskCreatePinnedToCore(&vTaskWiFi, "vTaskWiFi", TASK_WIFI_SIZE, NULL, TASK_WIFI_PRIORITY, NULL, TASK_WIFI_CORE);
+        // start the wifi application task
+        xTaskCreatePinnedToCore(&vTaskWiFi, "vTaskWiFi", TASK_WIFI_SIZE, NULL, TASK_WIFI_PRIORITY, &taskWiFiHandle, TASK_WIFI_CORE);
+    }
+}
+
+void stop_task_wifi(void)
+{
+    if (taskWiFiHandle)
+    {
+        vTaskSuspend(taskWiFiHandle);
+        stop_task_http_server();
+        ESP_LOGI(TAG, "Stoping task WiFi...");
+    }
+}
+
+eTaskState status_task_wifi(void)
+{
+    ESP_LOGI(TAG, "Getting task WiFi status");
+    if(taskWiFiHandle)
+        return eTaskGetState(taskWiFiHandle);
+    return eInvalid;
 }

@@ -56,6 +56,18 @@ BaseType_t wifi_app_send_message(wifi_app_message_e msgID);
 void start_task_wifi(void);
 
 /**
+ * @brief Stop WIFI task
+ * @param void
+ */
+void stop_task_wifi(void);
+
+/**
+ * @brief Get task Wifi state
+ * @param eTaskState task state
+ */
+eTaskState status_task_wifi(void);
+
+/**
  * @brief Gets the wifi configuration
  * @param void
  */
